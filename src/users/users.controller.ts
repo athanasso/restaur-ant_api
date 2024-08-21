@@ -11,6 +11,7 @@ import { Roles } from 'src/decorators/roles';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
+  @Roles('admin')
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.userService.createUser(createUserDto);
@@ -22,13 +23,13 @@ export class UsersController {
     return this.userService.findAll();
   }
 
-  @Roles('admin')
+  @Roles('admin', 'user')
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findOne(id);
   }
 
-  @Roles('admin')
+  @Roles('admin', 'user')
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
