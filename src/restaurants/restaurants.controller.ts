@@ -16,13 +16,11 @@ export class RestaurantsController {
     return await this.restaurantsService.create(createRestaurantDto);
   }
 
-  @Roles('admin','user')
   @Get()
   async findAll() {
     return await this.restaurantsService.findAll();
   }
 
-  @Roles('admin')
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.restaurantsService.findOne(parseInt(id, 10));

@@ -10,13 +10,12 @@ import { Roles } from 'src/decorators/roles';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Roles('user')
+  @Roles('admin','user')
   @Post()
   async createReview(@Body() createReviewDto: CreateReviewDto) {
     return await this.reviewsService.createReview(createReviewDto);
   }
 
-  @Roles('admin', 'user')
   @Get()
   async findAll(@Query('restaurantId') restaurantId?: string) {
     if (restaurantId) {
@@ -25,19 +24,18 @@ export class ReviewsController {
     return this.reviewsService.findAll();
   }
 
-  @Roles('admin', 'user')
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.reviewsService.findOne(parseInt(id, 10));
   }
 
-  @Roles('admin', 'user')
+  @Roles('admin')
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
     return this.reviewsService.update(parseInt(id, 10), updateReviewDto);
   }
 
-  @Roles('admin', 'user')
+  @Roles('admin')
   @Delete(':id')
   async remove(@Param('id') id: string) {
     await this.reviewsService.remove(parseInt(id, 10));

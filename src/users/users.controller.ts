@@ -29,7 +29,7 @@ export class UsersController {
     return this.userService.findOne(id);
   }
 
-  @Roles('admin', 'user')
+  @Roles('admin')
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
