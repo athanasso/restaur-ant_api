@@ -10,6 +10,9 @@ export class Restaurant {
   name: string;
 
   @Column()
+  phoneNumber: string;
+
+  @Column()
   address: string;
 
   @Column('float')
