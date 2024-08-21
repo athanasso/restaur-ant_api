@@ -1,12 +1,45 @@
-import { Controller, Post, Body, Param } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, Put, Delete, Query, UseGuards } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
+import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
+import { UpdateReviewDto } from 'src/dtos/review/update-review.dto';
+import { RolesGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/decorators/roles';
 
+@UseGuards(RolesGuard)
 @Controller('reviews')
 export class ReviewsController {
-  constructor(private reviewsService: ReviewsService) {}
+  constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Post(':restaurantId')
-  async createReview(@Param('restaurantId') restaurantId: string, @Body() reviewData: any) {
-    return await this.reviewsService.createReview({ ...reviewData, restaurant: { id: parseInt(restaurantId) } });
+  @Roles('admin', 'user')
+  @Post()
+  async createReview(@Body() createReviewDto: CreateReviewDto) {
+    return await this.reviewsService.createReview(createReviewDto);
+  }
+
+  @Roles('admin')
+  @Get()
+  async findAll(@Query('restaurantId') restaurantId?: string) {
+    if (restaurantId) {
+      return this.reviewsService.findAllByRestaurant(parseInt(restaurantId, 10));
+    }
+    return this.reviewsService.findAll();
+  }
+
+  @Roles('admin')
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.reviewsService.findOne(parseInt(id, 10));
+  }
+
+  @Roles('admin', 'user')
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
+    return this.reviewsService.update(parseInt(id, 10), updateReviewDto);
+  }
+
+  @Roles('admin')
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    await this.reviewsService.remove(parseInt(id, 10));
   }
 }
