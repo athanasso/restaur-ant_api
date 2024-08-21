@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 
@@ -7,39 +7,49 @@ export class AuthService {
   constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findUserByUsername(username);
-    if (user && (await this.usersService.comparePassword(pass, user.password))) {
-      const { password, ...result } = user;
-      return result;
+    try {
+      const user = await this.usersService.findUserByUsername(username);
+      if (user && (await this.usersService.comparePassword(pass, user.password))) {
+        const { password, ...result } = user;
+        return result;
+      }
+      return null;
+    } catch (error) {
+      throw new InternalServerErrorException('Error validating user');
     }
-    return null;
   }
 
   async login(user: any) {
-    const result = await this.validateUser(user.username, user.password);
+    try {
+      const result = await this.validateUser(user.username, user.password);
 
-    if (!result) {
-      throw new UnauthorizedException('Invalid credentials');
+      if (!result) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      const payload = {
+        username: user.username,
+        sub: result.id,
+        role: result.role,
+      };
+
+      const access_token = this.jwtService.sign(payload, {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '20m',
+      });
+
+      return { access_token };
+    } catch (error) {
+      throw new InternalServerErrorException('Error logging in');
     }
-
-    const payload = {
-      username: user.username,
-      sub: result.id,
-      role: result.role,
-    };
-
-    const access_token = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: '20m',
-    });
-
-    return {
-      access_token
-    };
   }
 
   async register(userData: any) {
-    const user = await this.usersService.createUser(userData);
-    return user;
+    try {
+      const user = await this.usersService.createUser(userData);
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException('Error registering user');
+    }
   }
 }

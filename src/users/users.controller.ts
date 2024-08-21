@@ -1,4 +1,17 @@
-import { Controller, Post, Body, Get, Put, Delete, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Put,
+  Delete,
+  Param,
+  ParseIntPipe,
+  UseGuards,
+  NotFoundException,
+  InternalServerErrorException,
+  HttpCode,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from 'src/entities/user.entity';
 import { CreateUserDto } from 'src/dtos/user/create-user.dto';
@@ -13,20 +26,36 @@ export class UsersController {
 
   @Roles('admin')
   @Post()
+  @HttpCode(201)
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.createUser(createUserDto);
+    try {
+      return await this.userService.createUser(createUserDto);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating user');
+    }
   }
 
   @Roles('admin')
   @Get()
   async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+    try {
+      return await this.userService.findAll();
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching users');
+    }
   }
 
   @Roles('admin', 'user')
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return this.userService.findOne(id);
+    try {
+      return await this.userService.findOne(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(`User with ID ${id} not found`);
+    }
   }
 
   @Roles('admin')
@@ -35,12 +64,27 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return this.userService.update(id, updateUserDto);
+    try {
+      return await this.userService.update(id, updateUserDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(`Error updating user with ID ${id}`);
+    }
   }
 
   @Roles('admin')
   @Delete(':id')
+  @HttpCode(204)
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.userService.remove(id);
+    try {
+      await this.userService.remove(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(`Error deleting user with ID ${id}`);
+    }
   }
 }

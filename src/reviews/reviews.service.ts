@@ -1,7 +1,7 @@
-import { Review } from 'src/entities/review.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Review } from 'src/entities/review.entity';
 import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
 import { UpdateReviewDto } from 'src/dtos/review/update-review.dto';
 import { Restaurant } from '../entities/restaurant.entity';
@@ -21,15 +21,18 @@ export class ReviewsService {
   async createReview(createReviewDto: CreateReviewDto): Promise<Review> {
     const { rating, comment, restaurantId, userId } = createReviewDto;
 
-    const restaurant = await this.restaurantRepository.findOneBy({ id: restaurantId });
-    const user = await this.userRepository.findOneBy({ id: userId });
-
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: restaurantId },
+    });
     if (!restaurant) {
-      throw new NotFoundException('Restaurant not found');
+      throw new NotFoundException(`Restaurant with ID ${restaurantId} not found`);
     }
 
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
     const review = this.reviewsRepository.create({
@@ -39,11 +42,19 @@ export class ReviewsService {
       user,
     });
 
-    return this.reviewsRepository.save(review);
+    try {
+      return await this.reviewsRepository.save(review);
+    } catch (error) {
+      throw new BadRequestException('Failed to create review');
+    }
   }
 
   async findAll(): Promise<Review[]> {
-    return this.reviewsRepository.find({ relations: ['restaurant', 'user'] });
+    try {
+      return await this.reviewsRepository.find({ relations: ['restaurant', 'user'] });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve reviews');
+    }
   }
 
   async findOne(id: number): Promise<Review> {
@@ -53,7 +64,7 @@ export class ReviewsService {
     });
 
     if (!review) {
-      throw new NotFoundException('Review not found');
+      throw new NotFoundException(`Review with ID ${id} not found`);
     }
 
     return review;
@@ -61,22 +72,44 @@ export class ReviewsService {
 
   async update(id: number, updateReviewDto: UpdateReviewDto): Promise<Review> {
     const review = await this.findOne(id);
-    await this.reviewsRepository.update(id, updateReviewDto);
-    return this.reviewsRepository.findOne({
-      where: { id },
-      relations: ['restaurant', 'user'],
-    });
+
+    try {
+      await this.reviewsRepository.update(id, updateReviewDto);
+      return await this.reviewsRepository.findOne({
+        where: { id },
+        relations: ['restaurant', 'user'],
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to update review');
+    }
   }
 
   async remove(id: number): Promise<void> {
     const review = await this.findOne(id);
-    await this.reviewsRepository.remove(review);
+
+    try {
+      await this.reviewsRepository.remove(review);
+    } catch (error) {
+      throw new BadRequestException('Failed to delete review');
+    }
   }
 
   async findAllByRestaurant(restaurantId: number): Promise<Review[]> {
-    return this.reviewsRepository.find({
-      where: { restaurant: { id: restaurantId } },
-      relations: ['user'],
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: restaurantId },
     });
+
+    if (!restaurant) {
+      throw new NotFoundException(`Restaurant with ID ${restaurantId} not found`);
+    }
+
+    try {
+      return await this.reviewsRepository.find({
+        where: { restaurant },
+        relations: ['user'],
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve reviews for the restaurant');
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -7,11 +7,25 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() user: any) {
-    return this.authService.login(user);
+    try {
+      return await this.authService.login(user);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Error logging in');
+    }
   }
 
   @Post('signup')
   async register(@Body() userData: any) {
-    return this.authService.register(userData);
+    try {
+      return await this.authService.register(userData);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Error registering user');
+    }
   }
 }
