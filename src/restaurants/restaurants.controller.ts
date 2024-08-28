@@ -43,7 +43,7 @@ export class RestaurantsController {
     }
   }
 
-  @Get(':id')
+  @Get('/:id')
   async findOne(@Param('id') id: string) {
     try {
       return await this.restaurantsService.findOne(parseInt(id, 10));
@@ -56,7 +56,7 @@ export class RestaurantsController {
   }
 
   @Roles('admin')
-  @Put(':id')
+  @Put('/:id')
   async update(@Param('id') id: string, @Body() updateRestaurantDto: UpdateRestaurantDto) {
     try {
       return await this.restaurantsService.update(parseInt(id, 10), updateRestaurantDto);
@@ -69,7 +69,7 @@ export class RestaurantsController {
   }
 
   @Roles('admin')
-  @Delete(':id')
+  @Delete('/:id')
   @HttpCode(204)
   async remove(@Param('id') id: string) {
     try {

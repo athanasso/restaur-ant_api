@@ -38,7 +38,7 @@ export class AuthService {
         expiresIn: '20m',
       });
 
-      return { access_token };
+      return { payload, access_token };
     } catch (error) {
       throw new InternalServerErrorException('Error logging in');
     }

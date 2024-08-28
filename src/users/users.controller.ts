@@ -45,8 +45,8 @@ export class UsersController {
     }
   }
 
-  @Roles('admin', 'user')
-  @Get(':id')
+  @Roles('admin')
+  @Get('/:id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     try {
       return await this.userService.findOne(id);
@@ -59,7 +59,7 @@ export class UsersController {
   }
 
   @Roles('admin')
-  @Put(':id')
+  @Put('/:id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
@@ -75,7 +75,7 @@ export class UsersController {
   }
 
   @Roles('admin')
-  @Delete(':id')
+  @Delete('/:id')
   @HttpCode(204)
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     try {

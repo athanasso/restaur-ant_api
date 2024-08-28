@@ -51,7 +51,7 @@ export class ReviewsController {
     }
   }
 
-  @Get(':id')
+  @Get('/:id')
   async findOne(@Param('id') id: string) {
     try {
       return await this.reviewsService.findOne(parseInt(id, 10));
@@ -64,7 +64,7 @@ export class ReviewsController {
   }
 
   @Roles('admin')
-  @Put(':id')
+  @Put('/:id')
   async update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
     try {
       return await this.reviewsService.update(parseInt(id, 10), updateReviewDto);
@@ -77,7 +77,7 @@ export class ReviewsController {
   }
 
   @Roles('admin')
-  @Delete(':id')
+  @Delete('/:id')
   @HttpCode(204)
   async remove(@Param('id') id: string) {
     try {
