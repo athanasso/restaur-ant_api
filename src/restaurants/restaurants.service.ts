@@ -16,9 +16,17 @@ export class RestaurantsService {
   ) {}
 
   async create(createRestaurantDto: CreateRestaurantDto): Promise<Restaurant> {
+    const restaurant: Restaurant = {
+      id: undefined,
+      name: createRestaurantDto.name,
+      address: createRestaurantDto.address,
+      phoneNumber: createRestaurantDto.phoneNumber,
+      averageRating: 0,
+      reviews: [],
+    };
     try {
-      const restaurant = this.restaurantsRepository.create(createRestaurantDto);
-      return await this.restaurantsRepository.save(restaurant);
+      const createdRestaurant = this.restaurantsRepository.create(restaurant);
+      return await this.restaurantsRepository.save(createdRestaurant);
     } catch (error) {
       throw new InternalServerErrorException('Error creating restaurant');
     }
