@@ -17,11 +17,16 @@ import { CreateRestaurantDto } from 'src/dtos/restaurant/create-restaurant.dto';
 import { UpdateRestaurantDto } from 'src/dtos/restaurant/update-restaurant.dto';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/roles';
+import { ReviewsService } from 'src/reviews/reviews.service';
+import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
 
 @Controller('restaurants')
 @UseGuards(RolesGuard)
 export class RestaurantsController {
-  constructor(private readonly restaurantsService: RestaurantsService) {}
+  constructor(
+    private readonly restaurantsService: RestaurantsService,
+    private readonly reviewsService: ReviewsService,
+  ) {}
 
   @Roles('admin')
   @Post()
@@ -79,6 +84,28 @@ export class RestaurantsController {
         throw error;
       }
       throw new InternalServerErrorException(`Error deleting restaurant with id ${id}`);
+    }
+  }
+
+  @Roles('admin', 'user')
+  @Get('/:id/reviews')
+  async findAllReviews(@Param('id') id: string) {
+    try {
+      return await this.reviewsService.findAllByRestaurant(parseInt(id, 10));
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching reviews for restaurant');
+    }
+  }
+
+  @Roles('admin', 'user')
+  @Post('/:id/reviews')
+  @HttpCode(201)
+  async createReview(@Param('id') id: string, @Body() createReviewDto: CreateReviewDto) {
+    try {
+      createReviewDto.restaurantId = parseInt(id, 10);
+      return await this.reviewsService.createReview(createReviewDto);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating review for restaurant');
     }
   }
 }

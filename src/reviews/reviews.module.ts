@@ -21,5 +21,6 @@ import { User } from 'src/entities/user.entity';
   ],
   providers: [ReviewsService, RolesGuard, Reflector],
   controllers: [ReviewsController],
+  exports: [ReviewsService],
 })
 export class ReviewsModule {}
