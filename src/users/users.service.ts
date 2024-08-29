@@ -5,12 +5,15 @@ import { User } from '../entities/user.entity';
 import { UpdateUserDto } from 'src/dtos/user/update-user.dto';
 import { CreateUserDto } from 'src/dtos/user/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { Review } from 'src/entities/review.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Review)
+    private reviewsRepository: Repository<Review>,
   ) {}
 
   async createUser(userData: CreateUserDto): Promise<User> {
@@ -76,6 +79,15 @@ export class UsersService {
 
   async remove(id: number): Promise<void> {
     try {
+      const user = await this.usersRepository.findOne({ where: { id }, relations: ['reviews'] });
+
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+
+      if (user.reviews && user.reviews.length > 0) {
+        await this.reviewsRepository.delete({ user: { id } });
+      }
       const result = await this.usersRepository.delete(id);
       if (result.affected === 0) {
         throw new NotFoundException(`User with ID ${id} not found`);

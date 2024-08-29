@@ -1,11 +1,19 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateReviewDto {
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
-    rating: number;
+    rating?: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    comment: string;
+    comment?: string;
+
+    @IsOptional()
+    @IsNumber()
+    userId?: number;
+
+    @IsOptional()
+    @IsNumber()
+    restaurantId?: number;
 }

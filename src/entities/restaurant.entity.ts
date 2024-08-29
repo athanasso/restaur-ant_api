@@ -15,7 +15,7 @@ export class Restaurant {
   @Column()
   address: string;
 
-  @Column('float')
+  @Column({ type: 'decimal', default: 0 })
   averageRating: number;
 
   @OneToMany(() => Review, review => review.restaurant)

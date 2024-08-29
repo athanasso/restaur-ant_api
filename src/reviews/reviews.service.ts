@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from 'src/entities/review.entity';
@@ -71,15 +71,41 @@ export class ReviewsService {
   }
 
   async update(id: number, updateReviewDto: UpdateReviewDto): Promise<Review> {
-    const review = await this.findOne(id);
+    let review: Review;
 
     try {
-      await this.reviewsRepository.update(id, updateReviewDto);
-      return await this.reviewsRepository.findOne({
+      review = await this.reviewsRepository.findOne({
         where: { id },
         relations: ['restaurant', 'user'],
       });
+
+      if (!review) {
+        throw new NotFoundException(`Review with ID ${id} not found`);
+      }
+
+      if (updateReviewDto.userId) {
+        const user = await this.userRepository.findOne({ where: { id: updateReviewDto.userId } });
+        if (!user) {
+          throw new BadRequestException('Invalid user ID');
+        }
+        review.user = user;
+      }
+
+      if (updateReviewDto.restaurantId) {
+        const restaurant = await this.restaurantRepository.findOne({ where: { id: updateReviewDto.restaurantId } });
+        if (!restaurant) {
+          throw new BadRequestException('Invalid restaurant ID');
+        }
+        review.restaurant = restaurant;
+      }
+
+      review.rating = updateReviewDto.rating ?? review.rating;
+      review.comment = updateReviewDto.comment ?? review.comment;
+
+      return await this.reviewsRepository.save(review);
+
     } catch (error) {
+      console.log('Error updating review:', error);
       throw new BadRequestException('Failed to update review');
     }
   }
@@ -114,39 +140,53 @@ export class ReviewsService {
   }
 
   async deleteReview(restaurantId: number, reviewId: number, userId: number): Promise<void> {
-    const review = await this.reviewsRepository.findOne({
-      where: { id: reviewId, restaurant: { id: restaurantId } },
-      relations: ['user'],
-    });
+    try {
+      const review = await this.reviewsRepository.findOne({
+        where: { id: reviewId, restaurant: { id: restaurantId } },
+        relations: ['user'],
+      });
 
-    if (!review) {
-      throw new NotFoundException('Review not found');
+      if (!review) {
+        throw new NotFoundException('Review not found');
+      }
+
+      if (review.user.id !== userId) {
+        throw new ForbiddenException('You are not allowed to delete this review');
+      }
+
+      await this.reviewsRepository.remove(review);
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Error deleting review');
     }
-
-    if (review.user.id != userId) {
-      throw new ForbiddenException('You are not allowed to delete this review');
-    }
-
-    await this.reviewsRepository.remove(review);
   }
 
   async updateReview(restaurantId: number, reviewId: number, updateReviewDto: UpdateReviewDto, userId: number): Promise<Review> {
-    const review = await this.reviewsRepository.findOne({
-      where: { id: reviewId, restaurant: { id: restaurantId } },
-      relations: ['user'],
-    });
+    try {
+      const review = await this.reviewsRepository.findOne({
+        where: { id: reviewId, restaurant: { id: restaurantId } },
+        relations: ['user'],
+      });
 
-    if (!review) {
-      throw new NotFoundException('Review not found');
+      if (!review) {
+        throw new NotFoundException('Review not found');
+      }
+
+      if (review.user.id !== userId) {
+        throw new ForbiddenException('You are not allowed to update this review');
+      }
+
+      review.rating = updateReviewDto.rating;
+      review.comment = updateReviewDto.comment;
+
+      return await this.reviewsRepository.save(review);
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Error updating review');
     }
-
-    if (review.user.id != userId) {
-      throw new ForbiddenException('You are not allowed to update this review');
-    }
-
-    review.rating = updateReviewDto.rating;
-    review.comment = updateReviewDto.comment;
-
-    return await this.reviewsRepository.save(review);
   }
 }

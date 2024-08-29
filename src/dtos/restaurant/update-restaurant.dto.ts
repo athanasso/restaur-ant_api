@@ -12,8 +12,4 @@ export class UpdateRestaurantDto {
     @IsOptional()
     @IsString()
     address?: string;
-
-    @IsOptional()
-    @IsNumber()
-    averageRating?: number;
 }

@@ -11,7 +11,6 @@ import {
   NotFoundException,
   ForbiddenException,
   InternalServerErrorException,
-  BadRequestException,
   HttpCode,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
@@ -25,7 +24,7 @@ import { Roles } from 'src/decorators/roles';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Roles('admin', 'user')
+  @Roles('admin')
   @Post()
   @HttpCode(201)
   async createReview(@Body() createReviewDto: CreateReviewDto) {
@@ -39,6 +38,7 @@ export class ReviewsController {
     }
   }
 
+  @Roles('admin')
   @Get()
   async findAll(@Query('restaurantId') restaurantId?: string) {
     try {
@@ -51,6 +51,7 @@ export class ReviewsController {
     }
   }
 
+  @Roles('admin')
   @Get('/:id')
   async findOne(@Param('id') id: string) {
     try {

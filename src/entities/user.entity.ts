@@ -1,5 +1,5 @@
 import { Review } from 'src/entities/review.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class User {
@@ -15,6 +15,6 @@ export class User {
   @Column({ default: 'user' })
   role: string;
 
-  @ManyToOne(() => User, user => user.reviews)
+  @OneToMany(() => Review, review => review.user)
   reviews: Review[];
 }

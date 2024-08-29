@@ -6,10 +6,11 @@ import { User } from 'src/entities/user.entity';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Reflector } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import { Review } from 'src/entities/review.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Review]),
     JwtModule.register({
       secret: process.env.JWT_SECRET || '',
       signOptions: { expiresIn: '20m' },

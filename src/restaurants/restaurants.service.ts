@@ -68,19 +68,38 @@ export class RestaurantsService {
 
   async update(id: number, updateRestaurantDto: UpdateRestaurantDto): Promise<Restaurant> {
     try {
-      await this.restaurantsRepository.update(id, updateRestaurantDto);
-      return this.findOne(id);
+      const restaurant = await this.restaurantsRepository.findOne({ where: { id } })
+
+      if (!restaurant) {
+        throw new NotFoundException(`Restaurant with ID ${id} not found`);
+      }
+
+      const { name, phoneNumber, address } = updateRestaurantDto;
+
+      if (name !== undefined) restaurant.name = name;
+      if (phoneNumber !== undefined) restaurant.phoneNumber = phoneNumber;
+      if (address !== undefined) restaurant.address = address;
+
+      return await this.restaurantsRepository.save(restaurant);
+
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error updating restaurant with id ${id}`);
+      throw new InternalServerErrorException(`Error updating restaurant with ID ${id}`);
     }
   }
 
   async remove(id: number): Promise<void> {
     try {
-      const restaurant = await this.findOne(id);
+      const restaurant = await this.restaurantsRepository.findOne({ where: { id }, relations: ['reviews'] });
+
+      if (!restaurant) {
+        throw new NotFoundException(`Restaurant with id ${id} not found`);
+      }
+
+      await this.reviewsRepository.delete({ restaurant });
+
       await this.restaurantsRepository.remove(restaurant);
     } catch (error) {
       if (error instanceof NotFoundException) {
