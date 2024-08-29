@@ -18,6 +18,8 @@ import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
 import { UpdateReviewDto } from 'src/dtos/review/update-review.dto';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/roles';
+import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
+import { Review } from 'src/entities/review.entity';
 
 @UseGuards(RolesGuard)
 @Controller('reviews')
@@ -40,14 +42,14 @@ export class ReviewsController {
 
   @Roles('admin')
   @Get()
-  async findAll(@Query('restaurantId') restaurantId?: string) {
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('take') take: number = 10,
+  ): Promise<PaginationResponseDto<Review>> {
     try {
-      if (restaurantId) {
-        return await this.reviewsService.findAllByRestaurant(parseInt(restaurantId, 10));
-      }
-      return await this.reviewsService.findAll();
+      return await this.reviewsService.findAll(page, take);
     } catch (error) {
-      throw new InternalServerErrorException('Error finding reviews');
+      throw new InternalServerErrorException('Error fetching reviews');
     }
   }
 

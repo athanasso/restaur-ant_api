@@ -6,6 +6,7 @@ import { UpdateUserDto } from 'src/dtos/user/update-user.dto';
 import { CreateUserDto } from 'src/dtos/user/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { Review } from 'src/entities/review.entity';
+import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -42,9 +43,28 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(
+    page: number = 1,
+    take: number = 10,
+  ): Promise<PaginationResponseDto<User>> {
     try {
-      return await this.usersRepository.find();
+      const [users, totalCount] = await Promise.all([
+        this.usersRepository.find({
+          take,
+          skip: (page - 1) * take,
+        }),
+        this.usersRepository.count(),
+      ]);
+
+      const pageCount = Math.ceil(totalCount / take);
+
+      return {
+        items: users,
+        totalCount,
+        page,
+        take,
+        pageCount,
+      };
     } catch (error) {
       throw new InternalServerErrorException('Error fetching users');
     }

@@ -5,6 +5,7 @@ import { Restaurant } from 'src/entities/restaurant.entity';
 import { CreateRestaurantDto } from 'src/dtos/restaurant/create-restaurant.dto';
 import { UpdateRestaurantDto } from 'src/dtos/restaurant/update-restaurant.dto';
 import { Review } from '../entities/review.entity';
+import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
 
 @Injectable()
 export class RestaurantsService {
@@ -24,9 +25,29 @@ export class RestaurantsService {
     }
   }
 
-  async findAll(): Promise<Restaurant[]> {
+  async findAll(
+    page: number = 1,
+    take: number = 10,
+  ): Promise<PaginationResponseDto<Restaurant>> {
     try {
-      return await this.restaurantsRepository.find({ relations: ['reviews'] });
+      const [restaurants, totalCount] = await Promise.all([
+        this.restaurantsRepository.find({
+          relations: ['reviews'],
+          take,
+          skip: (page - 1) * take,
+        }),
+        this.restaurantsRepository.count(),
+      ]);
+
+      const pageCount = Math.ceil(totalCount / take);
+
+      return {
+        items: restaurants,
+        totalCount,
+        page,
+        take,
+        pageCount,
+      };
     } catch (error) {
       throw new InternalServerErrorException('Error fetching restaurants');
     }

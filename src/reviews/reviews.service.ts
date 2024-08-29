@@ -6,6 +6,7 @@ import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
 import { UpdateReviewDto } from 'src/dtos/review/update-review.dto';
 import { Restaurant } from '../entities/restaurant.entity';
 import { User } from '../entities/user.entity';
+import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -49,11 +50,30 @@ export class ReviewsService {
     }
   }
 
-  async findAll(): Promise<Review[]> {
+  async findAll(page: number, take: number): Promise<PaginationResponseDto<Review>> {
     try {
-      return await this.reviewsRepository.find({ relations: ['restaurant', 'user'] });
+      const queryBuilder = this.reviewsRepository.createQueryBuilder('review')
+        .leftJoinAndSelect('review.restaurant', 'restaurant')
+        .leftJoinAndSelect('review.user', 'user')
+        .skip((page - 1) * take)
+        .take(take);
+
+      const [reviews, totalCount] = await Promise.all([
+        queryBuilder.getMany(),
+        queryBuilder.getCount(),
+      ]);
+
+      const pageCount = Math.ceil(totalCount / take);
+
+      return {
+        items: reviews,
+        totalCount,
+        page,
+        take,
+        pageCount,
+      };
     } catch (error) {
-      throw new BadRequestException('Failed to retrieve reviews');
+      throw new InternalServerErrorException('Error fetching reviews');
     }
   }
 

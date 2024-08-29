@@ -11,6 +11,7 @@ import {
   ForbiddenException,
   InternalServerErrorException,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from 'src/dtos/restaurant/create-restaurant.dto';
@@ -20,6 +21,8 @@ import { Roles } from 'src/decorators/roles';
 import { ReviewsService } from 'src/reviews/reviews.service';
 import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
 import { UpdateReviewDto } from 'src/dtos/review/update-review.dto';
+import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
+import { Restaurant } from 'src/entities/restaurant.entity';
 
 @Controller('restaurants')
 @UseGuards(RolesGuard)
@@ -41,9 +44,12 @@ export class RestaurantsController {
   }
 
   @Get()
-  async findAll() {
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('take') take: number = 10,
+  ): Promise<PaginationResponseDto<Restaurant>> {
     try {
-      return await this.restaurantsService.findAll();
+      return await this.restaurantsService.findAll(page, take);
     } catch (error) {
       throw new InternalServerErrorException('Error fetching restaurants');
     }

@@ -11,6 +11,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from 'src/entities/user.entity';
@@ -18,6 +19,7 @@ import { CreateUserDto } from 'src/dtos/user/create-user.dto';
 import { UpdateUserDto } from 'src/dtos/user/update-user.dto';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/roles';
+import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
 
 @Controller('users')
 @UseGuards(RolesGuard)
@@ -37,9 +39,12 @@ export class UsersController {
 
   @Roles('admin')
   @Get()
-  async findAll(): Promise<User[]> {
+  async findAll( 
+    @Query('page') page: number = 1,
+    @Query('take') take: number = 10,
+  ): Promise<PaginationResponseDto<User>> {
     try {
-      return await this.userService.findAll();
+      return await this.userService.findAll(page, take);
     } catch (error) {
       throw new InternalServerErrorException('Error fetching users');
     }
