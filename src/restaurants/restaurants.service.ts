@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Restaurant } from 'src/entities/restaurant.entity';
@@ -34,10 +34,24 @@ export class RestaurantsService {
 
   async findOne(id: number): Promise<Restaurant> {
     try {
-      const restaurant = await this.restaurantsRepository.findOne({
-        where: { id },
-        relations: ['reviews'],
-      });
+      const restaurant = await this.restaurantsRepository
+        .createQueryBuilder('restaurant')
+        .leftJoinAndSelect('restaurant.reviews', 'review')
+        .leftJoinAndSelect('review.user', 'user')
+        .select([
+          'restaurant.id',
+          'restaurant.name',
+          'restaurant.phoneNumber',
+          'restaurant.address',
+          'restaurant.averageRating',
+          'review.id',
+          'review.rating',
+          'review.comment',
+          'review.createdAt',
+          'user.id'
+        ])
+        .where('restaurant.id = :id', { id })
+        .getOne();
 
       if (!restaurant) {
         throw new NotFoundException('Restaurant not found');
@@ -75,4 +89,20 @@ export class RestaurantsService {
       throw new InternalServerErrorException(`Error deleting restaurant with id ${id}`);
     }
   }
+
+  async findUserReviewByRestaurant(restaurantId: number, userId: number): Promise<Review | null> {
+    const review = await this.reviewsRepository.findOne({
+      where: {
+        restaurant: { id: restaurantId },
+        user: { id: userId },
+      },
+      relations: ['restaurant', 'user'],
+    });
+
+    if (!review) {
+      throw new NotFoundException(`Review not found for user ${userId} in restaurant ${restaurantId}`);
+    }
+    return review;
+  }
+
 }

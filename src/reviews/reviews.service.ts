@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from 'src/entities/review.entity';
@@ -111,5 +111,42 @@ export class ReviewsService {
     } catch (error) {
       throw new BadRequestException('Failed to retrieve reviews for the restaurant');
     }
+  }
+
+  async deleteReview(restaurantId: number, reviewId: number, userId: number): Promise<void> {
+    const review = await this.reviewsRepository.findOne({
+      where: { id: reviewId, restaurant: { id: restaurantId } },
+      relations: ['user'],
+    });
+
+    if (!review) {
+      throw new NotFoundException('Review not found');
+    }
+
+    if (review.user.id != userId) {
+      throw new ForbiddenException('You are not allowed to delete this review');
+    }
+
+    await this.reviewsRepository.remove(review);
+  }
+
+  async updateReview(restaurantId: number, reviewId: number, updateReviewDto: UpdateReviewDto, userId: number): Promise<Review> {
+    const review = await this.reviewsRepository.findOne({
+      where: { id: reviewId, restaurant: { id: restaurantId } },
+      relations: ['user'],
+    });
+
+    if (!review) {
+      throw new NotFoundException('Review not found');
+    }
+
+    if (review.user.id != userId) {
+      throw new ForbiddenException('You are not allowed to update this review');
+    }
+
+    review.rating = updateReviewDto.rating;
+    review.comment = updateReviewDto.comment;
+
+    return await this.reviewsRepository.save(review);
   }
 }

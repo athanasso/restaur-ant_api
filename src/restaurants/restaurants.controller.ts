@@ -19,6 +19,7 @@ import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/roles';
 import { ReviewsService } from 'src/reviews/reviews.service';
 import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
+import { UpdateReviewDto } from 'src/dtos/review/update-review.dto';
 
 @Controller('restaurants')
 @UseGuards(RolesGuard)
@@ -107,5 +108,48 @@ export class RestaurantsController {
     } catch (error) {
       throw new InternalServerErrorException('Error creating review for restaurant');
     }
+  }
+
+  @Roles('admin', 'user')
+  @Get('/:restaurantId/reviews/:userId')
+  async findUserReview(
+  @Param('restaurantId') restaurantId: string,
+  @Param('userId') userId: string,
+  ) {
+    try {
+      const review = await this.restaurantsService.findUserReviewByRestaurant(parseInt(restaurantId, 10), parseInt(userId, 10));
+      if (!review) {
+        throw new NotFoundException(`Review for user ${userId} in restaurant ${restaurantId} not found`);
+      }
+      return review;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Error fetching user review for restaurant');
+    }
+  }
+
+  @Roles('admin', 'user')
+  @Delete('/:restaurantId/reviews/:reviewId/:userId')
+  async deleteReview(
+    @Param('restaurantId') restaurantId: number,
+    @Param('reviewId') reviewId: number,
+    @Param('userId') userId: number
+  ): Promise<void> {
+
+    await this.reviewsService.deleteReview(restaurantId, reviewId, userId);
+  }
+
+  @Roles('admin', 'user')
+  @Put('/:restaurantId/reviews/:reviewId/:userId')
+  async updateReview(
+    @Param('restaurantId') restaurantId: number,
+    @Param('reviewId') reviewId: number,
+    @Body() updateReviewDto: UpdateReviewDto,
+    @Param('userId') userId: number,
+  ): Promise<any> {
+
+    return this.reviewsService.updateReview(restaurantId, reviewId, updateReviewDto, userId);
   }
 }
