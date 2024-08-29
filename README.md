@@ -41,3 +41,7 @@ You can initiate the database with `docker compose up`
 To install the backend you need the NestJS CLI utility
 `npm i -g @nestjs/cli`
 Then, you may install the project with `npm install` and run it with `npm start run`
+
+## Testing
+
+The backend provides e2e tests that test all the endpoints with `npm run test:e2e`.
