@@ -22,16 +22,6 @@ In any case, you should be able to explain how a REST API works and demonstrate 
 
 It accomplishes the above with a REST API in NestJS using JWT authentication and a frontend in NextJS with next-auth for the authentication and pure tailwindCSS for the styling. It also uses a Postgres database for persistence.
 
-## Installation
-
-After you clone this project, you need to create 2 .env files.
-One for the backend with the following keys: `[DATABASE_URL, ENABLE_ENCRYPTION, JWT_SECRET, NODE_ENV]`
-One for the frontend with the following keys: `[NEXTAUTH_URL, BACKEND_URL, NEXT_PUBLIC_BACKEND_URL]`
-
-In addition to the .env files, you'll need to spin up a pg instance. This can happen from the docker-compose file in `restaur-ant-support`.
-Create the instance by running `npm run compose`
-
-These are some examples for the contents of the .env files, pointing to the docker pg instance:
 Backend
 ```
 DATABASE_HOST=localhost
