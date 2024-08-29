@@ -14,12 +14,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from 'src/entities/user.entity';
-import { CreateUserDto } from 'src/dtos/user/create-user.dto';
-import { UpdateUserDto } from 'src/dtos/user/update-user.dto';
-import { RolesGuard } from 'src/guards/role.guard';
-import { Roles } from 'src/decorators/roles';
-import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
+import { User } from '../entities/user.entity';
+import { CreateUserDto } from '../dtos/user/create-user.dto';
+import { UpdateUserDto } from '../dtos/user/update-user.dto';
+import { RolesGuard } from '../guards/role.guard';
+import { Roles } from '../decorators/roles';
+import { PaginationResponseDto } from '../dtos/pagination-response.dto';
 
 @Controller('users')
 @UseGuards(RolesGuard)

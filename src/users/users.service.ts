@@ -2,11 +2,11 @@ import { Injectable, NotFoundException, InternalServerErrorException } from '@ne
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
-import { UpdateUserDto } from 'src/dtos/user/update-user.dto';
-import { CreateUserDto } from 'src/dtos/user/create-user.dto';
+import { UpdateUserDto } from '../dtos/user/update-user.dto';
+import { CreateUserDto } from '../dtos/user/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { Review } from 'src/entities/review.entity';
-import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
+import { Review } from '../entities/review.entity';
+import { PaginationResponseDto } from '../dtos/pagination-response.dto';
 
 @Injectable()
 export class UsersService {

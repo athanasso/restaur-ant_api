@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Review } from 'src/entities/review.entity';
-import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
-import { UpdateReviewDto } from 'src/dtos/review/update-review.dto';
+import { Review } from '../entities/review.entity';
+import { CreateReviewDto } from '../dtos/review/create-review.dto';
+import { UpdateReviewDto } from '../dtos/review/update-review.dto';
 import { Restaurant } from '../entities/restaurant.entity';
 import { User } from '../entities/user.entity';
-import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
+import { PaginationResponseDto } from '../dtos/pagination-response.dto';
 
 @Injectable()
 export class ReviewsService {

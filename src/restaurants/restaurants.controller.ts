@@ -14,15 +14,15 @@ import {
   Query,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
-import { CreateRestaurantDto } from 'src/dtos/restaurant/create-restaurant.dto';
-import { UpdateRestaurantDto } from 'src/dtos/restaurant/update-restaurant.dto';
-import { RolesGuard } from 'src/guards/role.guard';
-import { Roles } from 'src/decorators/roles';
-import { ReviewsService } from 'src/reviews/reviews.service';
-import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
-import { UpdateReviewDto } from 'src/dtos/review/update-review.dto';
-import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
-import { Restaurant } from 'src/entities/restaurant.entity';
+import { CreateRestaurantDto } from '../dtos/restaurant/create-restaurant.dto';
+import { UpdateRestaurantDto } from '../dtos/restaurant/update-restaurant.dto';
+import { RolesGuard } from '../guards/role.guard';
+import { Roles } from '../decorators/roles';
+import { ReviewsService } from '../reviews/reviews.service';
+import { CreateReviewDto } from '../dtos/review/create-review.dto';
+import { UpdateReviewDto } from '../dtos/review/update-review.dto';
+import { PaginationResponseDto } from '../dtos/pagination-response.dto';
+import { Restaurant } from '../entities/restaurant.entity';
 
 @Controller('restaurants')
 @UseGuards(RolesGuard)

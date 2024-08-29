@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Restaurant } from '../entities/restaurant.entity';
-import { User } from '../entities/user.entity';
+import { Restaurant } from './restaurant.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Review {

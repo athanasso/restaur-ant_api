@@ -1,14 +1,14 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { ReviewsController } from './reviews.controller';
-import { Review } from 'src/entities/review.entity';
+import { Review } from '../entities/review.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RolesGuard } from 'src/guards/role.guard';
+import { RolesGuard } from '../guards/role.guard';
 import { Reflector } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { RestaurantsModule } from 'src/restaurants/restaurants.module';
-import { Restaurant } from 'src/entities/restaurant.entity';
-import { User } from 'src/entities/user.entity';
+import { RestaurantsModule } from '../restaurants/restaurants.module';
+import { Restaurant } from '../entities/restaurant.entity';
+import { User } from '../entities/user.entity';
 
 @Module({
   imports: [

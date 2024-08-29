@@ -14,12 +14,12 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
-import { CreateReviewDto } from 'src/dtos/review/create-review.dto';
-import { UpdateReviewDto } from 'src/dtos/review/update-review.dto';
-import { RolesGuard } from 'src/guards/role.guard';
-import { Roles } from 'src/decorators/roles';
-import { PaginationResponseDto } from 'src/dtos/pagination-response.dto';
-import { Review } from 'src/entities/review.entity';
+import { CreateReviewDto } from '../dtos/review/create-review.dto';
+import { UpdateReviewDto } from '../dtos/review/update-review.dto';
+import { RolesGuard } from '../guards/role.guard';
+import { Roles } from '../decorators/roles';
+import { PaginationResponseDto } from '../dtos/pagination-response.dto';
+import { Review } from '../entities/review.entity';
 
 @UseGuards(RolesGuard)
 @Controller('reviews')
