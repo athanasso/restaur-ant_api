@@ -47,7 +47,18 @@ export class AuthService {
   async register(userData: any) {
     try {
       const user = await this.usersService.createUser(userData);
-      return user;
+      const payload = {
+        username: user.username,
+        sub: user.id,
+        role: user.role,
+      };
+
+      const access_token = this.jwtService.sign(payload, {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '20m',
+      });
+
+      return { payload, access_token };
     } catch (error) {
       throw new InternalServerErrorException('Error registering user');
     }
