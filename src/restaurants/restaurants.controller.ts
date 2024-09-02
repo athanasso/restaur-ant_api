@@ -159,7 +159,7 @@ export class RestaurantsController {
     @Param('reviewId') reviewId: number,
     @Body() updateReviewDto: UpdateReviewDto,
     @Param('userId') userId: number,
-  ): Promise<any> {
+  ) {
     try {
       return await this.reviewsService.updateReview(restaurantId, reviewId, updateReviewDto, userId);
     } catch (error) {

@@ -7,7 +7,7 @@ import { UserDto } from 'src/dtos/auth/user.dto';
 export class AuthService {
   constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(username: string, pass: string) {
     try {
       const user = await this.usersService.findUserByUsername(username);
       if (user && (await this.usersService.comparePassword(pass, user.password))) {
