@@ -1,4 +1,4 @@
-import { Controller, Post, Body, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from 'src/dtos/auth/user.dto';
 
@@ -11,10 +11,7 @@ export class AuthController {
     try {
       return await this.authService.login(user);
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new InternalServerErrorException('Error logging in');
+      throw new BadRequestException('Error logging in');
     }
   }
 
@@ -24,10 +21,7 @@ export class AuthController {
       const result = await this.authService.register(user);
       return result;
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new InternalServerErrorException('Error registering user');
+      throw new BadRequestException('Error registering user');
     }
   }
 }

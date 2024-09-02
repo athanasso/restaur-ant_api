@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
@@ -23,7 +27,7 @@ export class UsersService {
       const newUser = this.usersRepository.create({ ...userData, password: hashedPassword });
       return await this.usersRepository.save(newUser);
     } catch (error) {
-      throw new InternalServerErrorException('Error creating user');
+      throw new BadRequestException('Error creating user');
     }
   }
 
@@ -31,7 +35,7 @@ export class UsersService {
     try {
       return await this.usersRepository.findOne({ where: { username } });
     } catch (error) {
-      throw new InternalServerErrorException('Error finding user by username');
+      throw new BadRequestException('Error finding user by username');
     }
   }
 
@@ -39,7 +43,7 @@ export class UsersService {
     try {
       return await bcrypt.compare(password, hash);
     } catch (error) {
-      throw new InternalServerErrorException('Error comparing password');
+      throw new BadRequestException('Error comparing password');
     }
   }
 
@@ -66,7 +70,7 @@ export class UsersService {
         pageCount,
       };
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching users');
+      throw new BadRequestException('Error fetching users');
     }
   }
 
@@ -81,7 +85,7 @@ export class UsersService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error fetching user with ID ${id}`);
+      throw new BadRequestException(`Error fetching user with ID ${id}`);
     }
   }
 
@@ -93,7 +97,7 @@ export class UsersService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error updating user with ID ${id}`);
+      throw new BadRequestException(`Error updating user with ID ${id}`);
     }
   }
 
@@ -116,7 +120,7 @@ export class UsersService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error deleting user with ID ${id}`);
+      throw new BadRequestException(`Error deleting user with ID ${id}`);
     }
   }
 }

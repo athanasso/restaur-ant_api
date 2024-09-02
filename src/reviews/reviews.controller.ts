@@ -10,7 +10,7 @@ import {
   UseGuards,
   NotFoundException,
   ForbiddenException,
-  InternalServerErrorException,
+  BadRequestException,
   HttpCode,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
@@ -33,10 +33,10 @@ export class ReviewsController {
     try {
       return await this.reviewsService.createReview(createReviewDto);
     } catch (error) {
-      if (error.response) {
-        throw new ForbiddenException(error.response);
+      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
+        throw error;
       }
-      throw new InternalServerErrorException('Error creating review');
+      throw new BadRequestException('Error creating review');
     }
   }
 
@@ -49,7 +49,7 @@ export class ReviewsController {
     try {
       return await this.reviewsService.findAll(page, take);
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching reviews');
+      throw new BadRequestException('Error fetching reviews');
     }
   }
 
@@ -62,7 +62,7 @@ export class ReviewsController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Review with id ${id} not found`);
+      throw new BadRequestException(`Review with id ${id} not found`);
     }
   }
 
@@ -75,7 +75,7 @@ export class ReviewsController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error updating review with id ${id}`);
+      throw new BadRequestException(`Error updating review with id ${id}`);
     }
   }
 
@@ -89,7 +89,7 @@ export class ReviewsController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error deleting review with id ${id}`);
+      throw new BadRequestException(`Error deleting review with id ${id}`);
     }
   }
 }

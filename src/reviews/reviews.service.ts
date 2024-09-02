@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from '../entities/review.entity';
@@ -73,7 +78,7 @@ export class ReviewsService {
         pageCount,
       };
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching reviews');
+      throw new BadRequestException('Error fetching reviews');
     }
   }
 
@@ -125,7 +130,9 @@ export class ReviewsService {
       return await this.reviewsRepository.save(review);
 
     } catch (error) {
-      console.log('Error updating review:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new BadRequestException('Failed to update review');
     }
   }
@@ -179,7 +186,7 @@ export class ReviewsService {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
       }
-      throw new InternalServerErrorException('Error deleting review');
+      throw new BadRequestException('Error deleting review');
     }
   }
 
@@ -206,7 +213,7 @@ export class ReviewsService {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
       }
-      throw new InternalServerErrorException('Error updating review');
+      throw new BadRequestException('Error updating review');
     }
   }
 }

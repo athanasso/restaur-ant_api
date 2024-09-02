@@ -9,7 +9,7 @@ import {
   ParseIntPipe,
   UseGuards,
   NotFoundException,
-  InternalServerErrorException,
+  BadRequestException,
   HttpCode,
   Query,
 } from '@nestjs/common';
@@ -33,7 +33,7 @@ export class UsersController {
     try {
       return await this.userService.createUser(createUserDto);
     } catch (error) {
-      throw new InternalServerErrorException('Error creating user');
+      throw new BadRequestException('Error creating user');
     }
   }
 
@@ -46,7 +46,7 @@ export class UsersController {
     try {
       return await this.userService.findAll(page, take);
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching users');
+      throw new BadRequestException('Error fetching users');
     }
   }
 
@@ -59,7 +59,7 @@ export class UsersController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`User with ID ${id} not found`);
+      throw new BadRequestException(`User with ID ${id} not found`);
     }
   }
 
@@ -75,7 +75,7 @@ export class UsersController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error updating user with ID ${id}`);
+      throw new BadRequestException(`Error updating user with ID ${id}`);
     }
   }
 
@@ -89,7 +89,7 @@ export class UsersController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error deleting user with ID ${id}`);
+      throw new BadRequestException(`Error deleting user with ID ${id}`);
     }
   }
 }

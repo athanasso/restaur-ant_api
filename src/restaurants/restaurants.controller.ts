@@ -8,10 +8,9 @@ import {
   Delete,
   UseGuards,
   NotFoundException,
-  ForbiddenException,
-  InternalServerErrorException,
   HttpCode,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from '../dtos/restaurant/create-restaurant.dto';
@@ -39,7 +38,7 @@ export class RestaurantsController {
     try {
       return await this.restaurantsService.create(createRestaurantDto);
     } catch (error) {
-      throw new InternalServerErrorException('Error creating restaurant');
+      throw new BadRequestException('Error creating restaurant');
     }
   }
 
@@ -51,7 +50,7 @@ export class RestaurantsController {
     try {
       return await this.restaurantsService.findAll(page, take);
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching restaurants');
+      throw new BadRequestException('Error fetching restaurants');
     }
   }
 
@@ -63,7 +62,7 @@ export class RestaurantsController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Restaurant with id ${id} not found`);
+      throw new BadRequestException(`Restaurant with id ${id} not found`);
     }
   }
 
@@ -76,7 +75,7 @@ export class RestaurantsController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error updating restaurant with id ${id}`);
+      throw new BadRequestException(`Error updating restaurant with id ${id}`);
     }
   }
 
@@ -90,7 +89,7 @@ export class RestaurantsController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error deleting restaurant with id ${id}`);
+      throw new BadRequestException(`Error deleting restaurant with id ${id}`);
     }
   }
 
@@ -100,7 +99,7 @@ export class RestaurantsController {
     try {
       return await this.reviewsService.findAllByRestaurant(parseInt(id, 10));
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching reviews for restaurant');
+      throw new BadRequestException('Error fetching reviews for restaurant');
     }
   }
 
@@ -112,15 +111,15 @@ export class RestaurantsController {
       createReviewDto.restaurantId = parseInt(id, 10);
       return await this.reviewsService.createReview(createReviewDto);
     } catch (error) {
-      throw new InternalServerErrorException('Error creating review for restaurant');
+      throw new BadRequestException('Error creating review for restaurant');
     }
   }
 
   @Roles('admin', 'user')
   @Get('/:restaurantId/reviews/:userId')
   async findUserReview(
-  @Param('restaurantId') restaurantId: string,
-  @Param('userId') userId: string,
+    @Param('restaurantId') restaurantId: string,
+    @Param('userId') userId: string,
   ) {
     try {
       const review = await this.restaurantsService.findUserReviewByRestaurant(parseInt(restaurantId, 10), parseInt(userId, 10));
@@ -132,7 +131,7 @@ export class RestaurantsController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException('Error fetching user review for restaurant');
+      throw new BadRequestException('Error fetching user review for restaurant');
     }
   }
 
@@ -143,8 +142,14 @@ export class RestaurantsController {
     @Param('reviewId') reviewId: number,
     @Param('userId') userId: number
   ): Promise<void> {
-
-    await this.reviewsService.deleteReview(restaurantId, reviewId, userId);
+    try {
+      await this.reviewsService.deleteReview(restaurantId, reviewId, userId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Error deleting review');
+    }
   }
 
   @Roles('admin', 'user')
@@ -155,7 +160,13 @@ export class RestaurantsController {
     @Body() updateReviewDto: UpdateReviewDto,
     @Param('userId') userId: number,
   ): Promise<any> {
-
-    return this.reviewsService.updateReview(restaurantId, reviewId, updateReviewDto, userId);
+    try {
+      return await this.reviewsService.updateReview(restaurantId, reviewId, updateReviewDto, userId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Error updating review');
+    }
   }
 }

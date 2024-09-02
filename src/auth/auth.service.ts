@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { UserDto } from 'src/dtos/auth/user.dto';
@@ -16,7 +16,7 @@ export class AuthService {
       }
       return null;
     } catch (error) {
-      throw new InternalServerErrorException('Error validating user');
+      throw new BadRequestException('Error validating user');
     }
   }
 
@@ -41,12 +41,16 @@ export class AuthService {
 
       return { payload, access_token };
     } catch (error) {
-      throw new InternalServerErrorException('Error logging in');
+      throw new BadRequestException('Error logging in');
     }
   }
 
   async register(userData: UserDto) {
     try {
+      const existingUser = await this.usersService.findUserByUsername(userData.username);
+      if (existingUser) {
+        throw new ConflictException('User already exists');
+      }
       const user = await this.usersService.createUser(userData);
       const payload = {
         username: user.username,
@@ -61,7 +65,7 @@ export class AuthService {
 
       return { payload, access_token };
     } catch (error) {
-      throw new InternalServerErrorException('Error registering user');
+      throw new BadRequestException('Error registering user');
     }
   }
 }

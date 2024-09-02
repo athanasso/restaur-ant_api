@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Restaurant } from '../entities/restaurant.entity';
@@ -21,7 +21,7 @@ export class RestaurantsService {
       const createdRestaurant = this.restaurantsRepository.create(createRestaurantDto);
       return await this.restaurantsRepository.save(createdRestaurant);
     } catch (error) {
-      throw new InternalServerErrorException('Error creating restaurant');
+      throw new BadRequestException('Error creating restaurant');
     }
   }
 
@@ -49,7 +49,7 @@ export class RestaurantsService {
         pageCount,
       };
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching restaurants');
+      throw new BadRequestException('Error fetching restaurants');
     }
   }
 
@@ -83,13 +83,13 @@ export class RestaurantsService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error fetching restaurant with id ${id}`);
+      throw new BadRequestException(`Error fetching restaurant with id ${id}`);
     }
   }
 
   async update(id: number, updateRestaurantDto: UpdateRestaurantDto): Promise<Restaurant> {
     try {
-      const restaurant = await this.restaurantsRepository.findOne({ where: { id } })
+      const restaurant = await this.restaurantsRepository.findOne({ where: { id } });
 
       if (!restaurant) {
         throw new NotFoundException(`Restaurant with ID ${id} not found`);
@@ -107,7 +107,7 @@ export class RestaurantsService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error updating restaurant with ID ${id}`);
+      throw new BadRequestException(`Error updating restaurant with ID ${id}`);
     }
   }
 
@@ -126,7 +126,7 @@ export class RestaurantsService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error deleting restaurant with id ${id}`);
+      throw new BadRequestException(`Error deleting restaurant with id ${id}`);
     }
   }
 
