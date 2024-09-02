@@ -28,10 +28,11 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
       }
 
-      const payload = {
+      let payload = {
         username: user.username,
-        sub: result.id,
+        id: result.id,
         role: result.role,
+        accessToken: '',
       };
 
       const access_token = this.jwtService.sign(payload, {
@@ -39,31 +40,27 @@ export class AuthService {
         expiresIn: '20m',
       });
 
-      return { payload, access_token };
+      payload = { ...payload, accessToken: access_token };
+
+      return { payload };
     } catch (error) {
       throw new BadRequestException('Error logging in');
     }
   }
 
-  async register(userData: UserDto) {
+  async register(User: UserDto) {
     try {
-      const existingUser = await this.usersService.findUserByUsername(userData.username);
+      const existingUser = await this.usersService.findUserByUsername(User.username);
       if (existingUser) {
         throw new ConflictException('User already exists');
       }
-      const user = await this.usersService.createUser(userData);
-      const payload = {
-        username: user.username,
-        sub: user.id,
-        role: user.role,
-      };
+      const user = await this.usersService.createUser(User);
 
-      const access_token = this.jwtService.sign(payload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: '20m',
-      });
-
-      return { payload, access_token };
+      return { 
+        success: true,
+        message: 'User registered successfully',
+        data: user.id
+       };
     } catch (error) {
       throw new BadRequestException('Error registering user');
     }
