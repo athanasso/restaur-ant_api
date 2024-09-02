@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
+import { UserDto } from 'src/dtos/auth/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,7 @@ export class AuthService {
     }
   }
 
-  async login(user: any) {
+  async login(user: UserDto) {
     try {
       const result = await this.validateUser(user.username, user.password);
 
@@ -44,7 +45,7 @@ export class AuthService {
     }
   }
 
-  async register(userData: any) {
+  async register(userData: UserDto) {
     try {
       const user = await this.usersService.createUser(userData);
       const payload = {
