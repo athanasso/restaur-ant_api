@@ -4,14 +4,14 @@ import { Role } from 'src/enums/Role';
 export class CreateUserDto {
 
     @IsString()
-    @MinLength(6)
+    @MinLength(5)
     username: string;
 
     @IsEmail()
     email: string;
 
     @IsString()
-    @MinLength(6)
+    @MinLength(5)
     password: string;
 
     @IsOptional()

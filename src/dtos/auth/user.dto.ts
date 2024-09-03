@@ -4,7 +4,7 @@ export class UserDto {
 
     @IsNotEmpty()
     @IsString()
-    @MinLength(6)
+    @MinLength(5)
     username: string;
 
     @IsOptional()
@@ -14,6 +14,6 @@ export class UserDto {
 
     @IsNotEmpty()
     @IsString()
-    @MinLength(6)
+    @MinLength(5)
     password: string;
 }

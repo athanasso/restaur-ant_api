@@ -5,7 +5,7 @@ export class UpdateUserDto {
 
     @IsOptional()
     @IsString()
-    @MinLength(3)
+    @MinLength(5)
     username?: string;
 
     @IsOptional()
@@ -14,7 +14,7 @@ export class UpdateUserDto {
 
     @IsOptional()
     @IsString()
-    @MinLength(6)
+    @MinLength(5)
     password?: string;
 
     @IsOptional()
