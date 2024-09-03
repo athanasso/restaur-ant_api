@@ -21,15 +21,22 @@ import { RolesGuard } from '../guards/role.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { PaginationResponseDto } from '../dtos/pagination-response.dto';
 import { Review } from '../entities/review.entity';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 @UseGuards(RolesGuard)
 @Controller('reviews')
+@ApiTags('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Roles('admin')
   @Post()
   @HttpCode(201)
+  @ApiOperation({ summary: 'Create a new review' })
+  @ApiResponse({ status: 201, description: 'Review created successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Not found.' })
   async createReview(@Body(new ValidationPipe()) createReviewDto: CreateReviewDto) {
     try {
       return await this.reviewsService.createReview(createReviewDto);
@@ -43,6 +50,11 @@ export class ReviewsController {
 
   @Roles('admin')
   @Get()
+  @ApiOperation({ summary: 'Retrieve a paginated list of reviews' })
+  @ApiQuery({ name: 'page', type: Number, required: false, description: 'Page number' })
+  @ApiQuery({ name: 'take', type: Number, required: false, description: 'Number of reviews to retrieve' })
+  @ApiResponse({ status: 200, description: 'Reviews retrieved successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async findAll(
     @Query('page') page: number = 1,
     @Query('take') take: number = 10,
@@ -56,6 +68,11 @@ export class ReviewsController {
 
   @Roles('admin')
   @Get('/:id')
+  @ApiOperation({ summary: 'Retrieve a review by ID' })
+  @ApiParam({ name: 'id', type: String, description: 'Review ID' })
+  @ApiResponse({ status: 200, description: 'Review retrieved successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 404, description: 'Review not found.' })
   async findOne(@Param('id') id: string) {
     try {
       return await this.reviewsService.findOne(parseInt(id, 10));
@@ -69,6 +86,11 @@ export class ReviewsController {
 
   @Roles('admin')
   @Put('/:id')
+  @ApiOperation({ summary: 'Update a review by ID' })
+  @ApiParam({ name: 'id', type: String, description: 'Review ID' })
+  @ApiResponse({ status: 200, description: 'Review updated successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 404, description: 'Review not found.' })
   async update(@Param('id') id: string, @Body(new ValidationPipe()) updateReviewDto: UpdateReviewDto) {
     try {
       return await this.reviewsService.update(parseInt(id, 10), updateReviewDto);
@@ -83,6 +105,11 @@ export class ReviewsController {
   @Roles('admin')
   @Delete('/:id')
   @HttpCode(204)
+  @ApiOperation({ summary: 'Delete a review by ID' })
+  @ApiParam({ name: 'id', type: String, description: 'Review ID' })
+  @ApiResponse({ status: 204, description: 'Review deleted successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 404, description: 'Review not found.' })
   async remove(@Param('id') id: string) {
     try {
       await this.reviewsService.remove(parseInt(id, 10));
