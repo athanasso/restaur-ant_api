@@ -21,12 +21,35 @@ import { UpdateUserDto } from '../dtos/user/update-user.dto';
 import { RolesGuard } from '../guards/role.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { PaginationResponseDto } from '../dtos/pagination-response.dto';
+import { SelfGuard } from '../guards/self.guard';
 
-
-@Controller('users')
 @UseGuards(RolesGuard)
+@Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
+
+  @Get('/me')
+  @UseGuards(SelfGuard)
+  async getMe(@Query('id', ParseIntPipe) userId: number): Promise<User> {
+    try {
+      return await this.userService.findOne(userId);
+    } catch (error) {
+      throw new BadRequestException('User not found');
+    }
+  }
+
+  @Put('/me')
+  @UseGuards(SelfGuard)
+  async updateMe(
+    @Query('id', ParseIntPipe) userId: number,
+    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    try {
+      return await this.userService.update(userId, updateUserDto);
+    } catch (error) {
+      throw new BadRequestException('Error updating user');
+    }
+  }
 
   @Roles('admin')
   @Post()
@@ -41,7 +64,7 @@ export class UsersController {
 
   @Roles('admin')
   @Get()
-  async findAll( 
+  async findAll(
     @Query('page') page: number = 1,
     @Query('take') take: number = 10,
   ): Promise<PaginationResponseDto<User>> {

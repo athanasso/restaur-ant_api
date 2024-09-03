@@ -7,6 +7,7 @@ import { RolesGuard } from '../guards/role.guard';
 import { Reflector } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { Review } from '../entities/review.entity';
+import { SelfGuard } from '../guards/self.guard';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { Review } from '../entities/review.entity';
       signOptions: { expiresIn: '20m' },
     }),
   ],
-  providers: [UsersService, RolesGuard, Reflector],
+  providers: [UsersService, RolesGuard, Reflector, SelfGuard],
   controllers: [UsersController],
   exports: [UsersService],
 })
