@@ -11,6 +11,7 @@ import {
   HttpCode,
   Query,
   BadRequestException,
+  ValidationPipe,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from '../dtos/restaurant/create-restaurant.dto';
@@ -34,7 +35,7 @@ export class RestaurantsController {
   @Roles('admin')
   @Post()
   @HttpCode(201)
-  async create(@Body() createRestaurantDto: CreateRestaurantDto) {
+  async create(@Body(new ValidationPipe()) createRestaurantDto: CreateRestaurantDto) {
     try {
       return await this.restaurantsService.create(createRestaurantDto);
     } catch (error) {
@@ -68,7 +69,7 @@ export class RestaurantsController {
 
   @Roles('admin')
   @Put('/:id')
-  async update(@Param('id') id: string, @Body() updateRestaurantDto: UpdateRestaurantDto) {
+  async update(@Param('id') id: string, @Body(new ValidationPipe()) updateRestaurantDto: UpdateRestaurantDto) {
     try {
       return await this.restaurantsService.update(parseInt(id, 10), updateRestaurantDto);
     } catch (error) {
@@ -106,7 +107,7 @@ export class RestaurantsController {
   @Roles('admin', 'user')
   @Post('/:id/reviews')
   @HttpCode(201)
-  async createReview(@Param('id') id: string, @Body() createReviewDto: CreateReviewDto) {
+  async createReview(@Param('id') id: string, @Body(new ValidationPipe()) createReviewDto: CreateReviewDto) {
     try {
       createReviewDto.restaurantId = parseInt(id, 10);
       return await this.reviewsService.createReview(createReviewDto);
@@ -157,8 +158,8 @@ export class RestaurantsController {
   async updateReview(
     @Param('restaurantId') restaurantId: number,
     @Param('reviewId') reviewId: number,
-    @Body() updateReviewDto: UpdateReviewDto,
     @Param('userId') userId: number,
+    @Body(new ValidationPipe()) updateReviewDto: UpdateReviewDto,
   ) {
     try {
       return await this.reviewsService.updateReview(restaurantId, reviewId, updateReviewDto, userId);

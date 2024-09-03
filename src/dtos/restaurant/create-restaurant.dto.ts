@@ -12,8 +12,4 @@ export class CreateRestaurantDto {
     @IsNotEmpty()
     @IsString()
     address: string;
-
-    @IsNotEmpty()
-    @IsNumber()
-    averageRating: number;
 }

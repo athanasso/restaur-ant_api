@@ -12,6 +12,7 @@ import {
   BadRequestException,
   HttpCode,
   Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../entities/user.entity';
@@ -29,7 +30,7 @@ export class UsersController {
   @Roles('admin')
   @Post()
   @HttpCode(201)
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  async create(@Body(new ValidationPipe()) createUserDto: CreateUserDto): Promise<User> {
     try {
       return await this.userService.createUser(createUserDto);
     } catch (error) {
@@ -67,7 +68,7 @@ export class UsersController {
   @Put('/:id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
   ): Promise<User> {
     try {
       return await this.userService.update(id, updateUserDto);

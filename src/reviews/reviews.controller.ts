@@ -12,6 +12,7 @@ import {
   ForbiddenException,
   BadRequestException,
   HttpCode,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from '../dtos/review/create-review.dto';
@@ -29,7 +30,7 @@ export class ReviewsController {
   @Roles('admin')
   @Post()
   @HttpCode(201)
-  async createReview(@Body() createReviewDto: CreateReviewDto) {
+  async createReview(@Body(new ValidationPipe()) createReviewDto: CreateReviewDto) {
     try {
       return await this.reviewsService.createReview(createReviewDto);
     } catch (error) {
@@ -68,7 +69,7 @@ export class ReviewsController {
 
   @Roles('admin')
   @Put('/:id')
-  async update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
+  async update(@Param('id') id: string, @Body(new ValidationPipe()) updateReviewDto: UpdateReviewDto) {
     try {
       return await this.reviewsService.update(parseInt(id, 10), updateReviewDto);
     } catch (error) {
