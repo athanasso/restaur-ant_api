@@ -31,6 +31,7 @@ POSTGRES_DB=name
 POSTGRES_USER=username
 POSTGRES_PASSWORD=password
 FRONTEND_URL=http://localhost:3001
+NODE_ENV=DEV
 ```
 ### Database
 
@@ -47,3 +48,7 @@ Then, you may install the project with `npm install` and run it with `npm start 
 The backend provides e2e tests that test all the endpoints with `npm run test:e2e`.
 
 You can find the front end <a href="https://github.com/athanasso/restaur-ant">here</a>
+
+## Seeding
+
+When you run the backend in NODE_ENV=DEV, you can call the `/app/seed` endpoint to seed the database with some example data.
