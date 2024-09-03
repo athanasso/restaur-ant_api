@@ -9,7 +9,6 @@ import { Restaurant } from './entities/restaurant.entity';
 import { Review } from './entities/review.entity';
 import { User } from './entities/user.entity';
 import { AuthModule } from './auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { CorsMiddleware } from './middleware/cors.middleware';
 

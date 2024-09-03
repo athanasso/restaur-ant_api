@@ -18,7 +18,7 @@ import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from '../dtos/review/create-review.dto';
 import { UpdateReviewDto } from '../dtos/review/update-review.dto';
 import { RolesGuard } from '../guards/role.guard';
-import { Roles } from '../decorators/roles';
+import { Roles } from '../decorators/roles.decorator';
 import { PaginationResponseDto } from '../dtos/pagination-response.dto';
 import { Review } from '../entities/review.entity';
 

@@ -19,8 +19,9 @@ import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dtos/user/create-user.dto';
 import { UpdateUserDto } from '../dtos/user/update-user.dto';
 import { RolesGuard } from '../guards/role.guard';
-import { Roles } from '../decorators/roles';
+import { Roles } from '../decorators/roles.decorator';
 import { PaginationResponseDto } from '../dtos/pagination-response.dto';
+
 
 @Controller('users')
 @UseGuards(RolesGuard)

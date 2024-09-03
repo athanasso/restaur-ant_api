@@ -17,7 +17,7 @@ import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from '../dtos/restaurant/create-restaurant.dto';
 import { UpdateRestaurantDto } from '../dtos/restaurant/update-restaurant.dto';
 import { RolesGuard } from '../guards/role.guard';
-import { Roles } from '../decorators/roles';
+import { Roles } from '../decorators/roles.decorator';
 import { ReviewsService } from '../reviews/reviews.service';
 import { CreateReviewDto } from '../dtos/review/create-review.dto';
 import { UpdateReviewDto } from '../dtos/review/update-review.dto';
