@@ -1,4 +1,4 @@
-import { Role } from 'src/enums/Role';
+import { Role } from '../enums/Role';
 import { Review } from './review.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
