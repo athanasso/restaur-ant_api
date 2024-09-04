@@ -8,11 +8,12 @@ import { CreateReviewDto } from '../src/dtos/review/create-review.dto';
 import { UpdateReviewDto } from '../src/dtos/review/update-review.dto';
 import { Restaurant } from '../src/entities/restaurant.entity';
 import { Review } from '../src/entities/review.entity';
-import { NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { PaginationResponseDto } from '../src/dtos/pagination-response.dto';
 import { RolesGuard } from '../src/guards/role.guard';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../src/entities/user.entity';
+import { Role } from '../src/enums/Role';
 
 jest.mock('../src/guards/role.guard');
 
@@ -67,30 +68,29 @@ describe('RestaurantsController', () => {
     it('should create a new restaurant', async () => {
       const createRestaurantDto: CreateRestaurantDto = {
           name: 'Test Restaurant', address: '123 Test St',
-          phoneNumber: '',
-          averageRating: 0
+          phoneNumber: ''
       };
       const expectedResult: Restaurant = {
-          id: 1, ...createRestaurantDto,
-          reviews: [],
-          calculateAverageRating: function (): void {
-              throw new Error('Function not implemented.');
-          }
+        id: 1, ...createRestaurantDto,
+        reviews: [],
+        calculateAverageRating: function (): void {
+          throw new Error('Function not implemented.');
+        },
+        averageRating: 0
       };
       jest.spyOn(restaurantsService, 'create').mockResolvedValue(expectedResult);
 
       expect(await controller.create(createRestaurantDto)).toBe(expectedResult);
     });
 
-    it('should throw InternalServerErrorException on error', async () => {
+    it('should throw BadRequestException on error', async () => {
       const createRestaurantDto: CreateRestaurantDto = {
           name: 'Test Restaurant', address: '123 Test St',
           phoneNumber: '',
-          averageRating: 0
       };
       jest.spyOn(restaurantsService, 'create').mockRejectedValue(new Error());
 
-      await expect(controller.create(createRestaurantDto)).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.create(createRestaurantDto)).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -116,10 +116,10 @@ describe('RestaurantsController', () => {
       expect(await controller.findAll(1, 10)).toBe(expectedResult);
     });
 
-    it('should throw InternalServerErrorException on error', async () => {
+    it('should throw BadRequestException on error', async () => {
       jest.spyOn(restaurantsService, 'findAll').mockRejectedValue(new Error());
 
-      await expect(controller.findAll(1, 10)).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.findAll(1, 10)).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -145,10 +145,10 @@ describe('RestaurantsController', () => {
       await expect(controller.findOne('1')).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw InternalServerErrorException on other errors', async () => {
+    it('should throw BadRequestException on other errors', async () => {
       jest.spyOn(restaurantsService, 'findOne').mockRejectedValue(new Error());
 
-      await expect(controller.findOne('1')).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.findOne('1')).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -176,11 +176,11 @@ describe('RestaurantsController', () => {
       await expect(controller.update('1', updateRestaurantDto)).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw InternalServerErrorException on other errors', async () => {
+    it('should throw BadRequestException on other errors', async () => {
       const updateRestaurantDto: UpdateRestaurantDto = { name: 'Updated Restaurant' };
       jest.spyOn(restaurantsService, 'update').mockRejectedValue(new Error());
 
-      await expect(controller.update('1', updateRestaurantDto)).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.update('1', updateRestaurantDto)).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -197,10 +197,10 @@ describe('RestaurantsController', () => {
       await expect(controller.remove('1')).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw InternalServerErrorException on other errors', async () => {
+    it('should throw BadRequestException on other errors', async () => {
       jest.spyOn(restaurantsService, 'remove').mockRejectedValue(new Error());
 
-      await expect(controller.remove('1')).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.remove('1')).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -220,8 +220,9 @@ describe('RestaurantsController', () => {
           }, user: {
               id: 0,
               username: '',
+              email: '',
               password: '',
-              role: '',
+              role: Role.USER,
               reviews: []
           },
           createdAt: undefined
@@ -231,10 +232,10 @@ describe('RestaurantsController', () => {
       expect(await controller.findAllReviews('1')).toBe(expectedResult);
     });
 
-    it('should throw InternalServerErrorException on error', async () => {
+    it('should throw BadRequestException on error', async () => {
       jest.spyOn(reviewsService, 'findAllByRestaurant').mockRejectedValue(new Error());
 
-      await expect(controller.findAllReviews('1')).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.findAllReviews('1')).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -267,14 +268,14 @@ describe('RestaurantsController', () => {
       expect(await controller.createReview('1', createReviewDto)).toBe(expectedResult);
     });
 
-    it('should throw InternalServerErrorException on error', async () => {
+    it('should throw BadRequestException on error', async () => {
       const createReviewDto: CreateReviewDto = {
           comment: 'Great place!', rating: 5, userId: 1,
           restaurantId: 0
       };
       jest.spyOn(reviewsService, 'createReview').mockRejectedValue(new Error());
 
-      await expect(controller.createReview('1', createReviewDto)).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.createReview('1', createReviewDto)).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -294,8 +295,9 @@ describe('RestaurantsController', () => {
           }, user: {
               id: 0,
               username: '',
+              email: '',
               password: '',
-              role: '',
+              role: Role.USER,
               reviews: []
           },
           createdAt: undefined
@@ -311,10 +313,10 @@ describe('RestaurantsController', () => {
       await expect(controller.findUserReview('1', '1')).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw InternalServerErrorException on other errors', async () => {
+    it('should throw BadRequestException on other errors', async () => {
       jest.spyOn(restaurantsService, 'findUserReviewByRestaurant').mockRejectedValue(new Error());
 
-      await expect(controller.findUserReview('1', '1')).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.findUserReview('1', '1')).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -328,7 +330,7 @@ describe('RestaurantsController', () => {
     it('should throw an error when deleteReview fails', async () => {
       jest.spyOn(reviewsService, 'deleteReview').mockRejectedValue(new Error('Delete failed'));
 
-      await expect(controller.deleteReview(1, 1, 1)).rejects.toThrow('Delete failed');
+      await expect(controller.deleteReview(1, 1, 1)).rejects.toThrow('Error deleting review');
     });
   });
 
@@ -345,14 +347,14 @@ describe('RestaurantsController', () => {
       };
       jest.spyOn(reviewsService, 'updateReview').mockResolvedValue(expectedResult);
 
-      expect(await controller.updateReview(1, 1, updateReviewDto, 1)).toBe(expectedResult);
+      expect(await controller.updateReview(1, 1, 1, updateReviewDto)).toBe(expectedResult);
     });
 
     it('should throw an error when updateReview fails', async () => {
       const updateReviewDto: UpdateReviewDto = { comment: 'Updated review', rating: 4 };
       jest.spyOn(reviewsService, 'updateReview').mockRejectedValue(new Error('Update failed'));
 
-      await expect(controller.updateReview(1, 1, updateReviewDto, 1)).rejects.toThrow('Update failed');
+      await expect(controller.updateReview(1, 1, 1, updateReviewDto)).rejects.toThrow('Error updating review');
     });
   });
 });
