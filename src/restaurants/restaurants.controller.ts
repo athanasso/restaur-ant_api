@@ -55,11 +55,11 @@ export class RestaurantsController {
   @ApiResponse({ status: 200, description: 'Restaurants retrieved successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   async findAll(
-    @Query('page') page: number = 1,
-    @Query('take') take: number = 10,
+    @Query('page') page: string = "1",
+    @Query('take') take: string = "10",
   ): Promise<PaginationResponseDto<Restaurant>> {
     try {
-      return await this.restaurantsService.findAll(page, take);
+      return await this.restaurantsService.findAll(parseInt(page, 10), parseInt(take, 10));
     } catch (error) {
       throw new BadRequestException('Error fetching restaurants');
     }

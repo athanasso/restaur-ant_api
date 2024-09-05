@@ -113,13 +113,13 @@ describe('RestaurantsController', () => {
       };
       jest.spyOn(restaurantsService, 'findAll').mockResolvedValue(expectedResult);
 
-      expect(await controller.findAll(1, 10)).toBe(expectedResult);
+      expect(await controller.findAll("1", "10")).toBe(expectedResult);
     });
 
     it('should throw BadRequestException on error', async () => {
       jest.spyOn(restaurantsService, 'findAll').mockRejectedValue(new Error());
 
-      await expect(controller.findAll(1, 10)).rejects.toThrow(BadRequestException);
+      await expect(controller.findAll("1", "10")).rejects.toThrow(BadRequestException);
     });
   });
 

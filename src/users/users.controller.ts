@@ -83,11 +83,11 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Users retrieved successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   async findAll(
-    @Query('page') page: number = 1,
-    @Query('take') take: number = 10,
+    @Query('page') page: string = "1",
+    @Query('take') take: string = "10",
   ): Promise<PaginationResponseDto<User>> {
     try {
-      return await this.userService.findAll(page, take);
+      return await this.userService.findAll(parseInt(page, 10), parseInt(take, 10));
     } catch (error) {
       throw new BadRequestException('Error fetching users');
     }
