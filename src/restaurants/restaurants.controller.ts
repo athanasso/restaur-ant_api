@@ -176,6 +176,7 @@ export class RestaurantsController {
   }
 
   @Roles('admin', 'user')
+  @HttpCode(204)
   @Delete('/:restaurantId/reviews/:reviewId/:userId')
   @ApiOperation({ summary: 'Delete a user\'s review for a restaurant' })
   @ApiParam({ name: 'restaurantId', type: Number, description: 'Restaurant ID' })
