@@ -13,5 +13,22 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "log_statement=all"]
+
+  postgres_test:
+    image: postgres:14
+    container_name: postgres_test
+    restart: always
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "log_statement=all"]  
+
 volumes:
   postgres_data:
+  postgres_test_data:

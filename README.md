@@ -32,7 +32,9 @@ POSTGRES_USER=username
 POSTGRES_PASSWORD=password
 FRONTEND_URL=http://localhost:3001
 NODE_ENV=DEV
+TEST_ENV=false
 ```
+###### TEST_ENV gets set to true when you run tests so it would use the test db port
 ### Database
 
 You can initiate the database with `docker compose up`
