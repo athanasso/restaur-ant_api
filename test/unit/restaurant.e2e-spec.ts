@@ -1,21 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RestaurantsController } from '../src/restaurants/restaurants.controller';
-import { RestaurantsService } from '../src/restaurants/restaurants.service';
-import { ReviewsService } from '../src/reviews/reviews.service';
-import { CreateRestaurantDto } from '../src/dtos/restaurant/create-restaurant.dto';
-import { UpdateRestaurantDto } from '../src/dtos/restaurant/update-restaurant.dto';
-import { CreateReviewDto } from '../src/dtos/review/create-review.dto';
-import { UpdateReviewDto } from '../src/dtos/review/update-review.dto';
-import { Restaurant } from '../src/entities/restaurant.entity';
-import { Review } from '../src/entities/review.entity';
+import { RestaurantsController } from '../../src/restaurants/restaurants.controller';
+import { RestaurantsService } from '../../src/restaurants/restaurants.service';
+import { ReviewsService } from '../../src/reviews/reviews.service';
+import { CreateRestaurantDto } from '../../src/dtos/restaurant/create-restaurant.dto';
+import { UpdateRestaurantDto } from '../../src/dtos/restaurant/update-restaurant.dto';
+import { CreateReviewDto } from '../../src/dtos/review/create-review.dto';
+import { UpdateReviewDto } from '../../src/dtos/review/update-review.dto';
+import { Restaurant } from '../../src/entities/restaurant.entity';
+import { Review } from '../../src/entities/review.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { PaginationResponseDto } from '../src/dtos/pagination-response.dto';
-import { RolesGuard } from '../src/guards/role.guard';
+import { PaginationResponseDto } from '../../src/dtos/pagination-response.dto';
+import { RolesGuard } from '../../src/guards/role.guard';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../src/entities/user.entity';
-import { Role } from '../src/enums/Role';
+import { User } from '../../src/entities/user.entity';
+import { Role } from '../../src/enums/Role';
 
-jest.mock('../src/guards/role.guard');
+jest.mock('../../src/guards/role.guard');
 
 describe('RestaurantsController', () => {
   let controller: RestaurantsController;

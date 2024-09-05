@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from '../src/auth/auth.controller';
-import { AuthService } from '../src/auth/auth.service';
-import { Role } from '../src/enums/Role';
+import { AuthController } from '../../src/auth/auth.controller';
+import { AuthService } from '../../src/auth/auth.service';
+import { Role } from '../../src/enums/Role';
 import { BadRequestException } from '@nestjs/common';
 
 describe('AuthController', () => {

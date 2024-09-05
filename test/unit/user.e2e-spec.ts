@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from '../src/users/users.controller';
-import { UsersService } from '../src/users/users.service';
-import { CreateUserDto } from '../src/dtos/user/create-user.dto';
-import { UpdateUserDto } from '../src/dtos/user/update-user.dto';
-import { User } from '../src/entities/user.entity';
+import { UsersController } from '../../src/users/users.controller';
+import { UsersService } from '../../src/users/users.service';
+import { CreateUserDto } from '../../src/dtos/user/create-user.dto';
+import { UpdateUserDto } from '../../src/dtos/user/update-user.dto';
+import { User } from '../../src/entities/user.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { PaginationResponseDto } from '../src/dtos/pagination-response.dto';
-import { Role } from '../src/enums/Role';
+import { PaginationResponseDto } from '../../src/dtos/pagination-response.dto';
+import { Role } from '../../src/enums/Role';
 
-jest.mock('../src/guards/role.guard');
+jest.mock('../../src/guards/role.guard');
 
 describe('UsersController', () => {
   let controller: UsersController;

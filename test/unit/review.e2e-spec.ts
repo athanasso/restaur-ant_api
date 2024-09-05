@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReviewsController } from '../src/reviews/reviews.controller';
-import { ReviewsService } from '../src/reviews/reviews.service';
-import { CreateReviewDto } from '../src/dtos/review/create-review.dto';
-import { UpdateReviewDto } from '../src/dtos/review/update-review.dto';
-import { Review } from '../src/entities/review.entity';
+import { ReviewsController } from '../../src/reviews/reviews.controller';
+import { ReviewsService } from '../../src/reviews/reviews.service';
+import { CreateReviewDto } from '../../src/dtos/review/create-review.dto';
+import { UpdateReviewDto } from '../../src/dtos/review/update-review.dto';
+import { Review } from '../../src/entities/review.entity';
 import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
-import { PaginationResponseDto } from '../src/dtos/pagination-response.dto';
-import { RolesGuard } from '../src/guards/role.guard';
+import { PaginationResponseDto } from '../../src/dtos/pagination-response.dto';
+import { RolesGuard } from '../../src/guards/role.guard';
 import { JwtService } from '@nestjs/jwt';
-import { Restaurant } from '../src/entities/restaurant.entity';
-import { User } from '../src/entities/user.entity';
-import { Role } from '../src/enums/Role';
+import { Restaurant } from '../../src/entities/restaurant.entity';
+import { User } from '../../src/entities/user.entity';
+import { Role } from '../../src/enums/Role';
 
-jest.mock('../src/guards/role.guard');
+jest.mock('../../src/guards/role.guard');
 
 describe('ReviewsController', () => {
   let controller: ReviewsController;
