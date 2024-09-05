@@ -1,4 +1,4 @@
-import { Controller, Post, Body, BadRequestException, ValidationPipe, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, ValidationPipe, ConflictException, UnauthorizedException, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from '../dtos/auth/user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -9,6 +9,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @HttpCode(200)
   @ApiOperation({ summary: 'Log in a user' })
   @ApiResponse({ status: 200, description: 'Successfully logged in.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
