@@ -84,7 +84,7 @@ export class UsersService {
       return user;
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error fetching user with ID ${id}`);
     }
@@ -100,7 +100,7 @@ export class UsersService {
       return this.findOne(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error updating user with ID ${id}`);
     }
@@ -123,7 +123,7 @@ export class UsersService {
       }
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error deleting user with ID ${id}`);
     }

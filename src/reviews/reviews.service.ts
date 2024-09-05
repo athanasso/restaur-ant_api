@@ -131,7 +131,7 @@ export class ReviewsService {
 
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException('Failed to update review');
     }
@@ -183,8 +183,10 @@ export class ReviewsService {
 
       await this.reviewsRepository.remove(review);
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
-        throw error;
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(error.message);
       }
       throw new BadRequestException('Error deleting review');
     }
@@ -210,8 +212,10 @@ export class ReviewsService {
 
       return await this.reviewsRepository.save(review);
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
-        throw error;
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(error.message);
       }
       throw new BadRequestException('Error updating review');
     }

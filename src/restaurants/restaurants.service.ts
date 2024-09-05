@@ -81,7 +81,7 @@ export class RestaurantsService {
       return restaurant;
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error fetching restaurant with id ${id}`);
     }
@@ -105,7 +105,7 @@ export class RestaurantsService {
 
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error updating restaurant with ID ${id}`);
     }
@@ -124,7 +124,7 @@ export class RestaurantsService {
       await this.restaurantsRepository.remove(restaurant);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error deleting restaurant with id ${id}`);
     }

@@ -45,7 +45,7 @@ export class AuthService {
       return { payload };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
-        throw error;
+        throw new UnauthorizedException('Invalid credentials');
       }
       throw new BadRequestException('Error logging in');
     }
@@ -67,7 +67,7 @@ export class AuthService {
       };
     } catch (error) {
       if (error instanceof ConflictException) {
-        throw error;
+        throw new ConflictException('User already exists');
       }
       throw new BadRequestException('Error registering user');
     }
