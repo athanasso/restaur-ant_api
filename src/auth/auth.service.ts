@@ -44,24 +44,31 @@ export class AuthService {
 
       return { payload };
     } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
       throw new BadRequestException('Error logging in');
     }
   }
 
-  async register(User: UserDto) {
+  async register(user: UserDto) {
     try {
-      const existingUser = await this.usersService.findUserByUsername(User.username);
+      const existingUser = await this.usersService.findUserByUsername(user.username);
       if (existingUser) {
         throw new ConflictException('User already exists');
       }
-      const user = await this.usersService.createUser(User);
 
-      return { 
+      const newUser = await this.usersService.createUser(user);
+
+      return {
         success: true,
         message: 'User registered successfully',
-        data: user.id
-       };
+        data: newUser.id,
+      };
     } catch (error) {
+      if (error instanceof ConflictException) {
+        throw error;
+      }
       throw new BadRequestException('Error registering user');
     }
   }

@@ -76,9 +76,9 @@ export class RestaurantsController {
       return await this.restaurantsService.findOne(parseInt(id, 10));
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(`Restaurant with ID ${id} not found`);
       }
-      throw new BadRequestException(`Restaurant with id ${id} not found`);
+      throw new BadRequestException(error.message || `Error fetching restaurant with ID ${id}`);
     }
   }
 
@@ -94,7 +94,7 @@ export class RestaurantsController {
       return await this.restaurantsService.update(parseInt(id, 10), updateRestaurantDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error updating restaurant with id ${id}`);
     }
@@ -113,7 +113,7 @@ export class RestaurantsController {
       await this.restaurantsService.remove(parseInt(id, 10));
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error deleting restaurant with id ${id}`);
     }
@@ -169,7 +169,7 @@ export class RestaurantsController {
       return review;
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException('Error fetching user review for restaurant');
     }
@@ -193,7 +193,7 @@ export class RestaurantsController {
       await this.reviewsService.deleteReview(restaurantId, reviewId, userId);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException('Error deleting review');
     }
@@ -218,7 +218,7 @@ export class RestaurantsController {
       return await this.reviewsService.updateReview(restaurantId, reviewId, updateReviewDto, userId);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException('Error updating review');
     }

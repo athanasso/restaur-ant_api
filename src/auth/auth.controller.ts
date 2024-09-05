@@ -1,4 +1,4 @@
-import { Controller, Post, Body, BadRequestException, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, ValidationPipe, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from '../dtos/auth/user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -16,7 +16,11 @@ export class AuthController {
     try {
       return await this.authService.login(user);
     } catch (error) {
-      throw new BadRequestException('Error logging in');
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException('Error logging in');
+      }
     }
   }
 
@@ -24,12 +28,17 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User successfully registered.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 409, description: 'User already exists.' })
   async register(@Body(new ValidationPipe()) user: UserDto) {
     try {
       const result = await this.authService.register(user);
       return result;
     } catch (error) {
-      throw new BadRequestException('Error registering user');
+      if (error instanceof ConflictException) {
+        throw new ConflictException(error.message);
+      } else {
+        throw new BadRequestException('Error registering user');
+      }
     }
   }
 }

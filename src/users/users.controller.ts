@@ -105,7 +105,7 @@ export class UsersController {
       return await this.userService.findOne(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`User with ID ${id} not found`);
     }
@@ -126,7 +126,7 @@ export class UsersController {
       return await this.userService.update(id, updateUserDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error updating user with ID ${id}`);
     }
@@ -145,7 +145,7 @@ export class UsersController {
       await this.userService.remove(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw new NotFoundException(error.message);
       }
       throw new BadRequestException(`Error deleting user with ID ${id}`);
     }
